@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赛博成员档案</title>
+    <style>
+        /* 赛博朋克基础样式 */
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --neon-green: #00ff9d;
+            --dark-bg: #0d0221;
+            --scanline: rgba(0, 255, 255, 0.05);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            color: var(--neon-blue);
+            position: relative;
+        }
+        
+        /* CRT显示器效果 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                var(--scanline) 2px),
+                repeating-linear-gradient(
+                to bottom,
+                var(--scanline),
+                var(--scanline) 1px,
+                transparent 3px,
+                transparent 5px);
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        /* 标题样式 */
+        .title {
+            color: var(--neon-blue);
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin-bottom: 30px;
+            animation: textGlow 2s infinite alternate;
+        }
+        
+        /* 成员卡片容器 */
+        .members-container {
+            width: 90%;
+            max-width: 1200px;
+            height: 70vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 卡片滑动轨道 */
+        .members-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease;
+        }
+        
+        /* 单个成员卡片 */
+        .member-card {
+            min-width: 300px;
+            height: 80%;
+            margin: 0 15px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--neon-pink);
+            box-shadow: 0 0 20px var(--neon-pink);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        
+        /* 卡片悬停效果 */
+        .member-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--neon-pink),
+                        0 0 50px var(--neon-purple);
+        }
+        
+        /* 自我介绍卡片 */
+        .bio-card {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 2, 33, 0.85);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            border-top: 2px solid var(--neon-blue);
+            color: white;
+        }
+        
+        .member-card:hover .bio-card {
+            transform: translateY(0);
+        }
+        
+        /* 成员姓名 */
+        .member-name {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        /* 导航按钮 */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(5, 217, 232, 0.3);
+            border: 2px solid var(--neon-blue);
+            border-radius: 50%;
+            color: var(--neon-blue);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(5, 217, 232, 0.6);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        
+        .prev {
+            left: 20px;
+        }
+        
+        .next {
+            right: 20px;
+        }
+
+        /* 二进制代码背景装饰 */
+        .binary-code {
+            position: absolute;
+            color: rgba(5, 217, 232, 0.1);
+            font-size: 0.8rem;
+            z-index: 1;
+            animation: scroll 50s linear infinite;
+        }
+        
+        /* 动画效果 */
+        @keyframes scroll {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
+        }
+        
+        @keyframes textGlow {
+            from {
+                text-shadow: 0 0 5px var(--neon-blue);
+            }
+            to {
+                text-shadow: 0 0 10px var(--neon-blue),
+                            0 0 20px var(--neon-purple);
+            }
+        }
+        
+        /* 指示器 */
+        .indicators {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .indicator {
+            width: 12px;
+            height: 12px;
+            background: rgba(5, 217, 232, 0.3);
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .indicator.active {
+            background: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+    </style>
+</head>
+<body>
+    <!-- 二进制代码背景元素 -->
+    <div class="binary-code" style="top:0; left:10%;">01001000 01101001 00100000 01000011 01111001 01100010 01100101 01110010 00100000 01010100 01100101 01100001 01101101</div>
+    <div class="binary-code" style="top:20%; left:70%;">01001101 01100101 01101101 01100010 01100101 01110010 00100000 01010000 01110010 01101111 01100110 01101001 01101100 01100101 01110011</div>
+    
+    <div class="main-container">
+        <h1 class="title">CYBER TEAM ARCHIVE</h1>
+        
+        <div class="members-container">
+            <button class="nav-btn prev">❮</button>
+            
+            <div class="members-track">
+                <!-- 成员卡片1 -->
+                <div class="member-card" style="background-image: url('assets/IMG_4751%20copy.jpg')">
+                    <div class="bio-card">
+                        <div class="member-name">胡杨 Joan</div>
+                        <p>网站搭建｜写作｜创意</p>
+                        <p>爱好：书影音（//）钩针</p>
+                        <p>唯理编号：A4A6B2B3C1</p>
+                    </div>
+                </div>
+                
+                <!-- 成员卡片2 -->
+                <div class="member-card" style="background-image: url('assets/yufei.jpg')">
+                    <div class="bio-card">
+                        <div class="member-name">周雨菲</div>
+                        <p>诗歌编写</p>
+                        <p>爱好：打羽毛球、弹琴</p>
+                        <p>唯理编号：A2E6C1</p>
+                    </div>
+                </div>
+                
+                <!-- 成员卡片3 -->
+                <div class="member-card" style="background-image: url('assets/YiJia.jpg')">
+                    <div class="bio-card">
+                        <div class="member-name">徐艺珈</div>
+                        <p>词条撰写</p>
+                        <p>爱好：化学实验、舞蹈</p>
+                        <p>唯理编号：B6C1E6</p>
+                    </div>
+                </div>
+                
+                <!-- 成员卡片4 -->
+                <div class="member-card" style="background-image: url('assets/Andrew.jpg')">
+                    <div class="bio-card">
+                        <div class="member-name">孙安皓 Andrew</div>
+                        <p>音乐材料处理</p>
+                        <p>爱好：足球、吉他</p>
+                        <p>唯理编号：A2BC5E6</p>
+                    </div>
+                </div>
+                
+                <!-- 成员卡片5 -->
+                <div class="member-card" style="background-image: url('assets/chuchu.jpg')">
+                    <div class="bio-card">
+                        <div class="member-name">楚楚</div>
+                        <p>文案设计</p>
+                        <p>爱好：写作、吹长笛、唱歌</p>
+                        <p>唯理编号：C2C5D1</p>
+                    </div>
+                </div>
+
+                <!-- 成员卡片6 -->
+                <div class="member-card" style="background-image: url('assets/chongwei.jpg')">
+                    <div class="bio-card">
+                        <div class="member-name">庞重威</div>
+                        <p>编曲师｜音频制作</p>
+                        <p>爱好：音乐、摄影</p>
+                        <p>唯理编号：D2E6C4C5</p>
+                    </div>
+                </div>
+
+                <!-- 成员卡片7 -->
+                <div class="member-card" style="background-image: url('assets/企鹅.jpg')">
+                    <div class="bio-card">
+                        <div class="member-name">企鹅</div>
+                        <p>吉祥物（企鹅说的）</p>
+                        <p>爱好：听歌、打飞盘、玩魔方、写字、旅游</p>
+                        <p>唯理编号：？（是组委理论上可以随意旁听但好像很忙）</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="nav-btn next">❯</button>
+        </div>
+        
+        <div class="indicators">
+            <div class="indicator active"></div>
+            <div class="indicator"></div>
+            <div class="indicator"></div>
+            <div class="indicator"></div>
+            <div class="indicator"></div>
+        </div>
+    </div>
+
+    <script>
+        // 滑动功能实现
+        const track = document.querySelector('.members-track');
+        const cards = document.querySelectorAll('.member-card');
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+        const indicators = document.querySelectorAll('.indicator');
+        
+        let currentIndex = 0;
+        const cardWidth = cards[0].offsetWidth + 30; // 包括margin
+        
+        function updateCarousel() {
+            track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+            
+            // 更新指示器
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentIndex);
+            });
+        }
+        
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < cards.length - 1) {
+                currentIndex++;
+                updateCarousel();
+            }
+        });
+        
+        // 点击指示器跳转
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentIndex = index;
+                updateCarousel();
+            });
+        });
+    </script>
+
+    <style>
+
+        /* 返回按钮 */
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 10px 25px;
+            background: rgba(13, 2, 33, 0.8);
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .back-btn:hover {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+    </style>
+    <!-- 返回按钮 -->
+    <a href="index.html" class="back-btn">MAINFRAME</a>
+
+    <!-- 页脚 -->
+    <div class="footer">
+        > SYSTEM STATUS: ONLINE | > LAST UPDATE: 2024.06.15 | > COPYRIGHT: CYBERSPACE LITERARY FOUNDATION
+    </div>
+</body>
+</html>

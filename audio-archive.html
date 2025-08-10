@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赛博音乐档案</title>
+    <style>
+        /* 赛博朋克基础样式 */
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --dark-bg: #0d0221;
+            --scanline: rgba(0, 255, 255, 0.05);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            display: flex;
+            height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            color: var(--neon-blue);
+            position: relative;
+        }
+        
+        /* CRT显示器效果 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                var(--scanline) 2px),
+                repeating-linear-gradient(
+                to bottom,
+                var(--scanline),
+                var(--scanline) 1px,
+                transparent 3px,
+                transparent 5px);
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                rgba(5, 217, 232, 0.1) 100%);
+            pointer-events: none;
+            z-index: 99;
+        }
+        
+        /* 左侧音乐列表 */
+        .music-list-container {
+            width: 30%;
+            height: 100%;
+            padding: 30px;
+            box-sizing: border-box;
+            border-right: 1px solid var(--neon-purple);
+            overflow-y: auto;
+        }
+        
+        .music-list-title {
+            color: var(--neon-pink);
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px var(--neon-pink);
+            animation: textGlow 2s infinite alternate;
+        }
+        
+        .music-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .music-item:hover {
+            background: rgba(255, 42, 109, 0.1);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+        
+        .music-item::before {
+            content: ">";
+            position: absolute;
+            left: -20px;
+            transition: all 0.3s;
+            color: var(--neon-blue);
+        }
+        
+        .music-item:hover::before {
+            left: 5px;
+        }
+        
+        .music-number {
+            color: var(--neon-purple);
+            margin-right: 10px;
+        }
+        
+        /* 右侧内容区 */
+        .right-container {
+            width: 70%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 八音盒区域 */
+        .music-box-container {
+            height: 70%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .music-box {
+            position: relative;
+            width: 550px; /* 加宽了盒子 */
+            height: 400px; /* 增加了高度以适应链接 */
+            background: rgba(13, 2, 33, 0.8);
+            border: 2px solid var(--neon-pink);
+            border-radius: 5px;
+            box-shadow: 0 0 20px var(--neon-pink),
+                        0 0 40px var(--neon-purple),
+                        inset 0 0 15px var(--neon-blue);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: flicker 8s infinite alternate;
+        }
+        
+        .dancer {
+            width: 240px; /* 加宽了图片 */
+            height: 340px; /* 增加了高度 */
+            background: url('https://i.imgur.com/JQq1Z0E.png') center/contain no-repeat;
+            position: relative;
+            margin-top: 20px;
+            animation: rotate 15s linear infinite, glitch 5s infinite;
+            filter: hue-rotate(180deg) brightness(1.2) drop-shadow(0 0 5px var(--neon-purple));
+            z-index: 2;
+        }
+        
+        /* 简介区域 */
+        .info-container {
+            height: 40%;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            border-top: 1px solid var(--neon-blue);
+            overflow-y: auto;
+        }
+        
+        .info-title {
+            color: var(--neon-blue);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .info-content {
+            color: var(--neon-purple);
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+        
+        /* 返回按钮 */
+        .back-button {
+            position: absolute;
+            bottom: 30px;
+            left: 15%;
+            transform: translateX(-50%);
+            padding: 10px 25px;
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .back-button:hover {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        
+        /* 赛博朋克风格动画 */
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                box-shadow: 0 0 20px var(--neon-pink),
+                            0 0 40px var(--neon-purple),
+                            inset 0 0 15px var(--neon-blue);
+            }
+            20%, 24%, 55% {
+                box-shadow: none;
+            }
+        }
+        
+        @keyframes glitch {
+            0% { transform: rotate(0deg); }
+            2% { transform: rotate(1deg); }
+            4% { transform: rotate(-1deg); }
+            6% { transform: rotate(1deg); }
+            8% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        @keyframes textGlow {
+            from {
+                text-shadow: 0 0 5px var(--neon-pink);
+            }
+            to {
+                text-shadow: 0 0 10px var(--neon-pink),
+                            0 0 20px var(--neon-purple);
+            }
+        }
+        
+        /* 二进制代码背景装饰 */
+        .binary-code {
+            position: absolute;
+            color: rgba(5, 217, 232, 0.1);
+            font-size: 0.8rem;
+            z-index: 1;
+            animation: scroll 50s linear infinite;
+        }
+        
+        @keyframes scroll {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
+        }
+
+        /* 新增的链接区域样式 */
+        .links-container {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .link-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid var(--neon-purple);
+            border-radius: 5px;
+            background: rgba(13, 2, 33, 0.7);
+            color: var(--neon-blue);
+            font-family: 'Courier New', monospace;
+            outline: none;
+            box-shadow: 0 0 10px var(--neon-purple);
+            transition: all 0.3s;
+        }
+        
+        .link-item:focus {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        /* 新增诗歌链接样式 */
+        .poem-links {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        
+        .poem-link {
+            color: var(--neon-blue);
+            text-decoration: none;
+            display: block;
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+        
+        .poem-link:hover {
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+        
+        .poem-link::before {
+            content: "> ";
+        }
+    </style>
+</head>
+<body>
+    <!-- 二进制代码背景元素 -->
+    <div class="binary-code" style="top:0; left:5%;">01001000 01101001 00100000 01000011 01111001 01100010 01100101 01110010 00100000 01000100 01100001 01101110 01100011 01100101 01110010</div>
+    <div class="binary-code" style="top:15%; left:80%;">01000010 01100001 01101100 01101100 01100101 01110100 00100000 01001001 01101110 00100000 01010100 01101000 01100101 00100000 01000011 01111001 01100010 01100101 01110010 00100000 01010011 01110000 01100001 01100011 01100101</div>
+    <div class="binary-code" style="top:30%; left:20%;">01000111 01101100 01101001 01110100 01100011 01101000 00100000 01000001 01100101 01110011 01110100 01101000 01100101 01110100 01101001 01100011 00100000 00110010 00110000 00110010 00110100</div>
+    
+    <!-- 左侧音乐列表 -->
+    <div class="music-list-container">
+        <div class="music-list-title">MUSIC ARCHIVE</div>
+        
+        <div class="music-item" onclick="showLinks(1)">
+              <span class="music-number">01</span> Bamboo Forest <br><br> <audio class="audio-player" src="audios/combos/03.mp3" controls></audio> 
+        </div>
+        
+        
+        <div class="music-item" onclick="showLinks(2)">
+              <span class="music-number">02</span> Running in Rainfall <br><br> <audio class="audio-player" src="audios/combos/09.mp3" controls></audio> 
+        </div>
+        
+        <div class="music-item" onclick="showLinks(3)">
+              <span class="music-number">03</span> Crowd and Camera <br><br> <audio class="audio-player" src="audios/combos/31.mp3" controls></audio> 
+        </div>
+        
+       <div class="music-item" onclick="showLinks(4)">
+              <span class="music-number">04</span> Bird's Song <br><br> <audio class="audio-player" src="audios/combos/23.mp3" controls></audio> 
+        </div>
+        
+       <div class="music-item" onclick="showLinks(5)">
+              <span class="music-number">05</span> By the Shore <br><br> <audio class="audio-player" src="audios/combos/19.mp3" controls></audio> 
+        </div>
+    </div>
+    
+    <!-- 右侧内容区 -->
+    <div class="right-container">
+        <!-- 八音盒区域 -->
+        <div class="music-box-container">
+            <div class="music-box">
+                <div class="dancer" id="dancerImage"></div>
+                <div class="links-container" id="linksContainer">
+                    <input type="text" class="link-item" id="link1" placeholder="Link 1">
+                    <input type="text" class="link-item" id="link2" placeholder="Link 2">
+                    <input type="text" class="link-item" id="link3" placeholder="Link 3">
+                    <br>
+                    <div class="info-content">
+                        每一段音频都来自于36个素材排列组合的其中一段。希望你找到喜欢的音乐，并且能够感受到这些音频与诗的匹配度。<br>
+                        如果你对于自己定制音频的话，欢迎访问"Mixer"来自行调配专属于你的音乐
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 简介区域 -->
+        <div class="info-container">
+            <div class="info-title">CHAOS STUDIOS SELECTION</div>
+            <div class="info-content">
+                > SYSTEM INITIALIZED: 2025.08.04<br>
+                > STATUS: ONLINE<br><br>
+                
+                网页使用方法：<br>
+                （1）选择左侧任意一段音频。你可以进行试听。<br>
+                （2）试听满意后，选中该音频，你可以看到右边方框区域出现相关的诗。欢迎阅读<br>
+                （3）也欢迎你阅读相应的音频描述哦。
+                <br><br>
+                NOTES: 非常喜欢素材的话，也可以下载！版权©️归于 庞重威Michael 所有
+            </div>
+        </div>
+    </div>
+    
+    <!-- 返回按钮 -->
+    <button class="back-button" onclick="window.location.href='index.html'">Return to Mainframe</button>
+
+    <script>
+        // 音频与诗歌的映射关系
+        const audioPoemMap = {
+            '1': [
+                {title: "Clouds", url: "C.html"},
+                {title: "Mazarine", url: "M.html"},
+                {title: "Silence", url: "S.html"}
+            ],
+            '2': [
+                {title: "Butterfly", url: "B.html"},
+                {title: "Wind", url: "W.html"},
+                {title: "Zhú", url: "Z.html"}
+            ],
+            '3': [
+                {title: "Turning Fork", url: "T.html"},
+                {title: "Quiver", url: "Q.html"},
+                {title: "Vibration", url: "V.html"}
+            ],
+            '4': [
+                {title: "Kapok - a Hikus", url: "K.html"},
+                {title: "Dew", url: "D.html"},
+                {title: "Leaf of Maple", url: "L.html"}
+            ],
+            '5': [
+                {title: "Nebulous", url: "N.html"},
+                {title: "Unwind", url: "U.html"},
+                {title: "Pedals", url: "P.html"}
+            ]
+        };
+
+        // 显示链接的函数
+        function showLinks(trackNumber) {
+            const linksContainer = document.getElementById('linksContainer');
+            const dancerImage = document.getElementById('dancerImage');
+            
+            // 显示链接容器
+            linksContainer.style.display = 'flex';
+            
+            // 获取对应曲目的诗歌链接
+            const poems = audioPoemMap[trackNumber.toString()];
+            
+            if (poems && poems.length >= 3) {
+                document.getElementById('link1').value = poems[0].title;
+                document.getElementById('link1').onclick = function() {
+                    window.open(poems[0].url, '_blank');
+                };
+                
+                document.getElementById('link2').value = poems[1].title;
+                document.getElementById('link2').onclick = function() {
+                    window.open(poems[1].url, '_blank');
+                };
+                
+                document.getElementById('link3').value = poems[2].title;
+                document.getElementById('link3').onclick = function() {
+                    window.open(poems[2].url, '_blank');
+                };
+            }
+            
+            // 根据曲目改变舞者图片
+            switch(trackNumber) {
+                case 1:
+                    dancerImage.style.backgroundImage = "url('https://i.imgur.com/JQq1Z0E.png')";
+                    break;
+                case 2:
+                    dancerImage.style.backgroundImage = "url('https://i.imgur.com/example2.png')";
+                    break;
+                case 3:
+                    dancerImage.style.backgroundImage = "url('https://i.imgur.com/example3.png')";
+                    break;
+                case 4:
+                    dancerImage.style.backgroundImage = "url('https://i.imgur.com/example4.png')";
+                    break;
+                case 5:
+                    dancerImage.style.backgroundImage = "url('https://i.imgur.com/example5.png')";
+                    break;
+                default:
+                    dancerImage.style.backgroundImage = "url('https://i.imgur.com/JQq1Z0E.png')";
+            }
+        }
+
+        // 修改后的选择音轨函数
+        function selectTrack(group, num, event) {
+            event.stopPropagation();
+            
+            // 如果点击的是已选中的项目，则取消选择
+            if (currentSelection[group] === num) {
+                currentSelection[group] = null;
+            } else {
+                currentSelection[group] = num;
+            }
+            
+            updateSelectionDisplay();
+            checkAllSelected();
+            
+            // 更新按钮文本
+            updateButtonTexts();
+        }
+
+        // 更新后的选择结果显示
+        function updateSelectionDisplay() {
+            const container = document.getElementById('selected-tracks-container');
+            container.innerHTML = '';
+            
+            for (const [group, trackNum] of Object.entries(currentSelection)) {
+                if (trackNum) {
+                    const trackElement = document.createElement('div');
+                    trackElement.className = 'selected-track';
+                    
+                    const trackText = document.createElement('span');
+                    trackText.textContent = `${group}组: 选项${trackNum}`;
+                    trackElement.appendChild(trackText);
+                    
+                    // 添加取消按钮
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.className = 'select-btn';
+                    cancelBtn.textContent = '取消';
+                    cancelBtn.style.marginLeft = '10px';
+                    cancelBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        currentSelection[group] = null;
+                        updateSelectionDisplay();
+                        checkAllSelected();
+                        updateButtonTexts();
+                    };
+                    trackElement.appendChild(cancelBtn);
+                    
+                    // 添加诗歌链接
+                    const poemLinks = document.createElement('div');
+                    poemLinks.className = 'poem-links';
+                    
+                    const audioKey = `${group}${trackNum}`;
+                    const poems = audioPoemMap[audioKey];
+                    
+                    if (poems && poems.length > 0) {
+                        poems.forEach(poem => {
+                            const link = document.createElement('a');
+                            link.className = 'poem-link';
+                            link.href = poem.url;
+                            link.textContent = poem.title;
+                            link.target = '_blank'; // 在新标签页打开
+                            poemLinks.appendChild(link);
+                        });
+                    }
+                    
+                    trackElement.appendChild(poemLinks);
+                    container.appendChild(trackElement);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

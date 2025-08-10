@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赛博文学档案</title>
+    <style>
+        /* 赛博朋克基础样式 - 与之前保持一致 */
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --dark-bg: #0d0221;
+            --scanline: rgba(0, 255, 255, 0.05);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            color: var(--neon-blue);
+            position: relative;
+        }
+
+        /* CRT显示器效果 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                var(--scanline) 2px),
+                repeating-linear-gradient(
+                to bottom,
+                var(--scanline),
+                var(--scanline) 1px,
+                transparent 3px,
+                transparent 5px);
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                rgba(5, 217, 232, 0.1) 100%);
+            pointer-events: none;
+            z-index: 99;
+        }
+        
+        /* 标题区域 */
+        .header {
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid var(--neon-purple);
+        }
+        
+        .main-title {
+            color: var(--neon-pink);
+            font-size: 2.5rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px var(--neon-pink);
+            animation: textGlow 2s infinite alternate;
+        }
+        
+        .sub-title {
+            color: var(--neon-blue);
+            font-size: 1rem;
+            margin-top: 10px;
+            letter-spacing: 3px;
+        }
+        
+        /* 字母导航网格 - 修改了间距和卡片尺寸 */
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 改为5列布局 */
+            gap: 30px; /* 增大间距 */
+            padding: 50px; /* 增加内边距 */
+            max-width: 1400px; /* 增加最大宽度 */
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 1200px) {
+            .alphabet-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .alphabet-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .alphabet-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                padding: 30px;
+            }
+        }
+        
+
+        /* 字母卡片 - 增大了尺寸和边框 */
+        .letter-card {
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid var(--neon-blue); /* 加粗边框 */
+            border-radius: 10px; /* 增大圆角 */
+            font-size: 4rem; /* 增大字母尺寸 */
+            font-weight: bold;
+            color: var(--neon-purple);
+            text-shadow: 0 0 10px var(--neon-purple); /* 增强发光效果 */
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            background: rgba(13, 2, 33, 0.7);
+            text-decoration: none;
+            min-width: 120px; /* 最小宽度 */
+            min-height: 120px; /* 最小高度 */
+            box-shadow: 0 0 15px var(--neon-blue); /* 初始发光效果 */
+        }
+        
+        .letter-card:hover {
+            background: rgba(255, 42, 109, 0.3); /* 更明显的悬停背景 */
+            transform: scale(1.1); /* 更大的放大效果 */
+            box-shadow: 0 0 30px var(--neon-pink); /* 更强的发光效果 */
+            color: var(--neon-pink);
+            text-shadow: 0 0 20px var(--neon-pink);
+            border-color: var(--neon-pink); /* 悬停时改变边框颜色 */
+        }
+        
+        .letter-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 45%,
+                var(--neon-blue) 50%,
+                transparent 55%
+            );
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: all 0.5s;
+        }
+        
+        .letter-card:hover::before {
+            opacity: 0.7; /* 更明显的闪光效果 */
+            animation: shine 1.5s infinite;
+        }
+
+        /* 页脚 */
+        .footer {
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid var(--neon-purple);
+            color: var(--neon-blue);
+            font-size: 0.8rem;
+        }
+        
+        /* 二进制代码背景装饰 */
+        .binary-code {
+            position: absolute;
+            color: rgba(5, 217, 232, 0.1);
+            font-size: 0.8rem;
+            z-index: 1;
+            animation: scroll 50s linear infinite;
+        }
+        
+        /* 动画效果 */
+        @keyframes textGlow {
+            from {
+                text-shadow: 0 0 5px var(--neon-pink);
+            }
+            to {
+                text-shadow: 0 0 10px var(--neon-pink),
+                            0 0 20px var(--neon-purple);
+            }
+        }
+        
+        @keyframes scroll {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
+        }
+        
+        @keyframes shine {
+            0% { left: -100%; top: -100%; }
+            100% { left: 100%; top: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 二进制代码背景元素 -->
+    <div class="binary-code" style="top:0; left:5%;">01010100 01001000 01000101 00100000 01000001 01010010 01000011 01001000 01001001 01010110 01000101 00100000 01001111 01000110 00100000 01001100 01001001 01010100 01000101 01010010 01000001 01010100 01010101 01010010 01000101</div>
+    <div class="binary-code" style="top:15%; left:80%;">01000001 00100000 01011010 00100000 01001111 01000110 00100000 01010000 01001111 01000101 01010100 01010010 01011001 00100000 01000001 01001110 01000100 00100000 01010000 01010010 01001111 01010011 01000101</div>
+    <div class="binary-code" style="top:30%; left:20%;">01000011 01011001 01000010 01000101 01010010 01010000 01010101 01001110 01001011 00100000 01010100 01000101 01011000 01010100 00100000 01000100 01000001 01010100 01000001 01000010 01000001 01010011 01000101</div>
+    
+    <!-- 标题区域 -->
+    <div class="header">
+        <h1 class="main-title">CYBER LITERATURE ARCHIVE</h1>
+        <p class="sub-title">> SELECT A LETTER TO ACCESS POETRY DATABASE</p>
+    </div>
+    
+    <!-- 字母导航网格 - 增大了每个卡片的尺寸 -->
+    <div class="alphabet-grid">
+        <a href="A.html" class="letter-card">A</a>
+        <a href="B.html" class="letter-card">B</a>
+        <a href="C.html" class="letter-card">C</a>
+        <a href="D.html" class="letter-card">D</a>
+        <a href="E.html" class="letter-card">E</a>
+        <a href="F.html" class="letter-card">F</a>
+        <a href="G.html" class="letter-card">G</a>
+        <a href="H.html" class="letter-card">H</a>
+        <a href="I.html" class="letter-card">I</a>
+        <a href="J.html" class="letter-card">J</a>
+        <a href="K.html" class="letter-card">K</a>
+        <a href="L.html" class="letter-card">L</a>
+        <a href="M.html" class="letter-card">M</a>
+        <a href="N.html" class="letter-card">N</a>
+        <a href="O.html" class="letter-card">O</a>
+        <a href="P.html" class="letter-card">P</a>
+        <a href="Q.html" class="letter-card">Q</a>
+        <a href="R.html" class="letter-card">R</a>
+        <a href="S.html" class="letter-card">S</a>
+        <a href="T.html" class="letter-card">T</a>
+        <a href="U.html" class="letter-card">U</a>
+        <a href="V.html" class="letter-card">V</a>
+        <a href="W.html" class="letter-card">W</a>
+        <a href="X.html" class="letter-card">X</a>
+        <a href="Y.html" class="letter-card">Y</a>
+        <a href="Z.html" class="letter-card">Z</a>
+        <a href="2.html" class="letter-card">2</a>
+        <a href="Z.html" class="letter-card">0</a>
+        <a href="Z.html" class="letter-card">2</a>
+        <a href="Z.html" class="letter-card">5</a>
+    </div>
+    
+    <style>
+
+        /* 返回按钮 */
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 10px 25px;
+            background: rgba(13, 2, 33, 0.8);
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .back-btn:hover {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+    </style>
+    <!-- 返回按钮 -->
+    <a href="index.html" class="back-btn">MAINFRAME</a>
+
+    <!-- 页脚 -->
+    <div class="footer">
+        > SYSTEM STATUS: ONLINE | > LAST UPDATE: 2025.08.05 | > COPYRIGHT: CHAOS STUDIOS @ Veritas 2025
+    </div>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赛博档案简介</title>
+    <style>
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --dark-bg: #0d0221;
+            --scanline: rgba(0, 255, 255, 0.05);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            font-family: 'Courier New', monospace;
+            color: var(--neon-blue);
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 0%, var(--scanline) 2px),
+                        repeating-linear-gradient(to bottom, var(--scanline), var(--scanline) 1px, transparent 3px, transparent 5px);
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            border-bottom: 1px solid var(--neon-purple);
+        }
+        
+        .title {
+            color: var(--neon-pink);
+            font-size: 2.8rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--neon-pink);
+            animation: textGlow 2s infinite alternate;
+        }
+        
+        .content {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 30px;
+            line-height: 1.8;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            border-left: 3px solid var(--neon-blue);
+            padding-left: 20px;
+        }
+        
+        .section-title {
+            color: var(--neon-blue);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .section-content {
+            color: var(--neon-purple);
+        }
+        
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 10px 25px;
+            background: rgba(13, 2, 33, 0.8);
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .back-btn:hover {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+        
+        @keyframes textGlow {
+            from { text-shadow: 0 0 5px var(--neon-pink); }
+            to { text-shadow: 0 0 15px var(--neon-pink), 0 0 25px var(--neon-purple); }
+        }
+        
+        .binary-bg {
+            position: absolute;
+            color: rgba(5, 217, 232, 0.05);
+            font-size: 0.8rem;
+            z-index: -1;
+            animation: scroll 60s linear infinite;
+        }
+        
+        @keyframes scroll {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
+        }
+
+        /* 视频播放器样式 */
+        .video-section {
+            margin: 50px auto;
+            max-width: 800px;
+            padding: 20px;
+            border: 2px solid var(--neon-purple);
+            position: relative;
+            box-shadow: 0 0 20px var(--neon-pink),
+                        inset 0 0 10px var(--neon-blue);
+            animation: flicker 5s infinite alternate;
+        }
+
+        .video-title {
+            color: var(--neon-blue);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--neon-blue);
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .video-btn {
+            padding: 8px 15px;
+            background: transparent;
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 80px;
+        }
+
+        .video-btn:hover {
+            background: var(--neon-pink);
+            color: var(--dark-bg);
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .video-playlist {
+            margin-top: 20px;
+            border-top: 1px solid var(--neon-purple);
+            padding-top: 15px;
+        }
+
+        .playlist-item {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid var(--neon-blue);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .playlist-item::before {
+            content: "▶";
+            margin-right: 10px;
+            color: var(--neon-purple);
+            font-size: 0.8em;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255, 42, 109, 0.1);
+            transform: translateX(5px);
+        }
+
+        .playlist-item.active {
+            background: rgba(5, 217, 232, 0.1);
+            border-color: var(--neon-pink);
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                box-shadow: 0 0 20px var(--neon-pink),
+                            inset 0 0 10px var(--neon-blue);
+            }
+            20%, 24%, 55% {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="binary-bg" style="top:0; left:10%;">01000011 01011001 01000010 01000101 01010010 00100000 01000001 01010010 01000011 01001000 01001001 01010110 01000101 00100000 01010000 01010010 01001111 01001010 01000101 01000011 01010100</div>
+    <div class="binary-bg" style="top:20%; left:70%;">01010110 01001001 01010011 01001001 01001111 01001110 00100000 00110010 00110000 00110010 00110100</div>
+    
+    <div class="header">
+        <h1 class="title">关于我们的项目 ABOUT OUR PROJECT</h1>
+    </div>
+    
+    <div class="content">
+        <div class="section">
+            <h2 class="section-title">> 起源——我们是谁？</h2>
+            <div class="section-content">
+                混沌工作室是创立于唯理书院2025的融思项目小组。我们致力于融合自然与科技。基于对于八音盒之美的探究和讨论，我们想象了一种未来的音韵与诗之美。我们的目标是创造一个数字化的诗歌+音乐互动档案馆，保存和展示组员们思维碰撞的火花。<br><br>
+                小组名称:无序工作室<br>
+                小组成员：孙安皓，肖容楚，周雨菲,徐艺珈，胡杨，庞重威<br>
+                主指导讲师：刘圣雨 谢海鑫<br>
+                友情指导：谈笑
+                负责组委：企鹅魔方
+
+            </div>
+        </div>
+        
+        <div class="video-section">
+            <h2 class="video-title">项目花絮 Moments</h2>
+            <div class="video-container">
+                <video id="cyber-video" poster="assets/企鹅八音盒.jpg" controls>
+                    <source src="videos/Draft Check 1.mov" type="video/mp4">
+                    您的浏览器不支持HTML5视频
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="video-btn" onclick="playVideo()">播放</button>
+                <button class="video-btn" onclick="pauseVideo()">暂停</button>
+                <button class="video-btn" onclick="toggleMute()">静音</button>
+                <button class="video-btn" onclick="toggleFullscreen()">全屏</button>
+            </div>
+            <div class="video-playlist">
+                <div class="playlist-item active" onclick="changeVideo('videos/Draft Check 1.mov', this)">> 网站第一稿的兴奋分享时刻【2025.08.04 00:11】</div>
+                <div class="playlist-item" onclick="changeVideo('videos/音轨制作记录.mp4', this)">> 分享音轨制作过程！【2025.08.04 00:20】</div>
+                <div class="playlist-item" onclick="changeVideo('videos/制作过程记录.MOV', this)">> 展示代码生成过程——作为参考【2025.08.05 08:11】</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">>关于我们的项目</h2>
+            <div class="section-content">
+                <h3 class="section-title">>网站内容简介</h3>
+                <div class="section-content">
+                目前我们做了以下存档<br>
+                - A-Z诗歌库 A-Z Poetry：访问受到自然启发的A-Z主题诗歌。灵感来源于百科词条，记录我们对于自然的多面体验。灵感借鉴：Cyber-feminist Index<br>
+                - 你的音乐/空间 Musix Mixer：可供用户自由组合音乐的平台，反映了小组成员对于创作的思考。我们的创作过程，与我们作为观众的体验有多少关系？<br>
+                - 音乐存档库 Selected Music Archive：存放精选的几段混合音频。根据网站搭建者的理解，为音频命名并匹配了相应的推荐阅读诗歌。详细互动方式可以点进主页后查看。<br>
+                - 团队成员 Team：欢迎进一步了解我们融思小组的各成员～<br><br>
+                
+                Hope you have a great fun here and enjoy the music and poetry!<br>
+                This is your own journey.
+                <div>
+                <h3 class="section-title">>网站概念阐释</h3>
+                <div class="section-content">
+                关于艺术（内容）的思考：<br>
+                1.	无序的声音是美的吗？<br>
+                2.	自然的声音美在哪里？如何体现?<br>
+                3.	非人创作的艺术在什么地方实现了创新和突破？<br>
+                4.	如何用人文手段体现自然的无序之美？<br><br>
+                使用网站（形式）的内涵：<br>
+                1.	互动性更强<br>
+                2.	形式上更加新颖 <br>  
+                3.	在逐渐电子化的生活中，通过自然声音，感受自然之美，呼吁回归自然。
+                <div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">> 项目制作过程——日志</h2>
+            <div class="section-content">
+                <h3 class="section-title">>灵感来源&设计思路</h3>
+                <div class="section-content">
+                我们通过自然元素与人工编写的碰撞和混合,再借助八音盒这一蕴含丰富美的媒介,探讨无序与有序的有趣共存关系,原本无序的材料能否成为美学的产物。<br><br>
+                与选题相关的唯理课程:<br>
+                A1:美与暴力<br>
+                D1 脑洞大开：认知科学与互动艺术的设计之旅<br>
+                D2边玩边做边想，电子游戏研究与创作101<br>
+                E1艺术已死，还是无处不在？-当代艺术的边界与变形<br>
+                E6自我叙事：用创作者的视角创作生活
+                </div>
+                <h3 class="section-title">> 项目时间线</h3>
+                <div class="section-content">
+                7月29日：提交计划书；小组内部确定分工并开始各自任务；各成员开始收集音频资料<br>
+                7月30日：成员分享收集到的音频资料并计划产出内容<br>
+                8月1日：项目描述草稿第一版+音频草稿第一版【小组里程碑】<br>
+                8月3日：目标完善+打磨内容，测试运行情况【小组里程碑2】<br>
+                8月4日：准备项目展出；微调修改
+                </div>
+
+                <h3 class="section-title">> 小组分工</h3>
+                <div class="section-content">
+                网站搭建(版面设计/程序编写/概念建设)：Joan 胡杨<br><br>
+                音乐编排和裁剪组：<br>
+                音乐编排：庞重威<br>
+                素材整理编辑：Andrew 孙安皓<br><br>
+                文字编写（A-Z诗歌）:<br>
+                肖容楚（M, N, O, P, Q, R）<br>
+                周雨菲（2, B, C, D, F, L, Z）<br>
+                徐艺珈（S, T, U, V, W, X）<br>
+                胡杨（A, R）<br><br>
+                八音盒草图设计和词条分类(交互性，需要编程，向游戏设计课程讲师沙皮寻求支持)<br>
+                噪音录制和整理(收集+录制)：六人分摊，每人录制3-5个噪音元素
+                </div>
+                <br><br>
+                胡杨：有机会的话，还想要尝试继续完善更多功能！！
+        </div>
+    </div>
+    
+    <a href="index.html" class="back-btn">MAINFRAME</a>
+
+    <script>
+        // 视频播放器功能
+        const video = document.getElementById('cyber-video');
+        
+        function playVideo() {
+            video.play().catch(e => console.log("自动播放被阻止:", e));
+        }
+        
+        function pauseVideo() {
+            video.pause();
+        }
+        
+        function toggleMute() {
+            video.muted = !video.muted;
+            const btn = document.querySelector('.video-btn:nth-child(3)');
+            btn.textContent = video.muted ? '取消静音' : '静音';
+        }
+        
+        function toggleFullscreen() {
+            const elem = video.parentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+        
+        function changeVideo(src, element) {
+            try {
+                // 显示加载状态
+                const originalText = element.textContent;
+                element.innerHTML = '> 加载中...';
+                
+                // 更新视频源
+                video.src = src;
+                video.poster = '';
+                
+                video.onloadeddata = function() {
+                    video.play().catch(e => console.log("自动播放被阻止:", e));
+                    document.querySelectorAll('.playlist-item').forEach(item => {
+                        item.classList.remove('active');
+                        if(item.textContent.includes('加载中')) {
+                            item.innerHTML = originalText;
+                        }
+                    });
+                    element.classList.add('active');
+                };
+                
+                video.onerror = function() {
+                    console.error('视频加载失败:', src);
+                    element.innerHTML = '> 加载失败';
+                };
+                
+                video.load();
+                
+                // 视觉效果
+                const videoSection = document.querySelector('.video-section');
+                videoSection.style.animation = 'none';
+                void videoSection.offsetWidth;
+                videoSection.style.animation = 'flicker 5s infinite alternate';
+                
+            } catch (error) {
+                console.error('切换视频出错:', error);
+            }
+        }
+        
+        // 事件监听
+        video.addEventListener('play', () => {
+            document.querySelector('.video-section').style.boxShadow = 
+                `0 0 25px var(--neon-pink), inset 0 0 15px var(--neon-blue)`;
+        });
+        
+        video.addEventListener('pause', () => {
+            document.querySelector('.video-section').style.boxShadow = 
+                `0 0 20px var(--neon-pink), inset 0 0 10px var(--neon-blue)`;
+        });
+        
+        // 初始化静音状态（解决浏览器自动播放限制）
+        video.muted = true;
+    </script>
+</body>
+</html>

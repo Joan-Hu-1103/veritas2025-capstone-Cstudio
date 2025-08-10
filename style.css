@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 50px;
+    background-color: #f0f0f0;
+}
+h1 {
+    color: #333;
+}
+
+/* 返回按钮 */
+.back-button {
+    position: fixed; /* 改为fixed使其始终可见 */
+    bottom: 30px;
+    left: 50%; /* 居中显示 */
+    transform: translateX(-50%);
+    padding: 12px 30px; /* 稍微加大按钮尺寸 */
+    background: rgba(13, 2, 33, 0.8); /* 半透明背景 */
+    border: 2px solid var(--neon-blue); /* 加粗边框 */
+    color: var(--neon-blue);
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    z-index: 10; /* 确保在内容之上 */
+    font-size: 1rem;
+    border-radius: 5px; /* 添加圆角 */
+}
+
+.back-button:hover {
+    background: var(--neon-blue);
+    color: var(--dark-bg);
+    box-shadow: 0 0 20px var(--neon-blue); /* 增强发光效果 */
+    transform: translateX(-50%) scale(1.05); /* 悬停微放大 */
+}

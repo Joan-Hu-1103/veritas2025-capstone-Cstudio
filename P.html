@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A - 赛博文学档案</title>
+    <style>
+        /* 与主页面相同的样式 */
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --dark-bg: #0d0221;
+            --scanline: rgba(0, 255, 255, 0.05);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            color: var(--neon-blue);
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                var(--scanline) 2px),
+                repeating-linear-gradient(
+                to bottom,
+                var(--scanline),
+                var(--scanline) 1px,
+                transparent 3px,
+                transparent 5px);
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                rgba(5, 217, 232, 0.1) 100%);
+            pointer-events: none;
+            z-index: 99;
+        }
+        
+        .header {
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid var(--neon-purple);
+        }
+        
+        .letter-title {
+            color: var(--neon-pink);
+            font-size: 5rem;
+            margin: 0;
+            text-shadow: 0 0 10px var(--neon-pink);
+            animation: textGlow 2s infinite alternate;
+        }
+        
+        .back-link {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+        
+        .content-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 30px;
+            flex: 1;
+        }
+        
+        .poem-title {
+            color: var(--neon-blue);
+            font-size: 1.8rem;
+            border-bottom: 1px solid var(--neon-purple);
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        
+        .poem-content {
+            color: var(--neon-purple);
+            line-height: 1.8;
+            font-size: 1.1rem;
+            white-space: pre-line;
+            margin: 30px 0;
+        }
+        
+        .footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--neon-purple);
+            color: var(--neon-blue);
+            font-size: 0.8rem;
+        }
+        
+        .binary-code {
+            position: absolute;
+            color: rgba(5, 217, 232, 0.1);
+            font-size: 0.8rem;
+            z-index: 1;
+            animation: scroll 50s linear infinite;
+        }
+        
+        @keyframes textGlow {
+            from {
+                text-shadow: 0 0 5px var(--neon-pink);
+            }
+            to {
+                text-shadow: 0 0 10px var(--neon-pink),
+                            0 0 20px var(--neon-purple);
+            }
+        }
+        
+        @keyframes scroll {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 二进制代码背景元素 -->
+    <div class="binary-code" style="top:0; left:5%;">01000001 01010000 01010000 01000001 01010010 01001001 01010100 01001001 01001111 01001110 00100000 01001111 01000110 00100000 01000001 01001101 01000010 01001001 01000111 01010101 01001001 01010100 01011001</div>
+    <div class="binary-code" style="top:15%; left:80%;">01010000 01001111 01000101 01010100 01010010 01011001 00100000 01000100 01000001 01010100 01000001 01000010 01000001 01010011 01000101 00100000 01010011 01000101 01000011 01010100 01001001 01001111 01001110 00100000 01000001</div>
+    
+    <!-- 标题区域 -->
+    <div class="header">
+        <h1 class="letter-title">P</h1>
+        <a href="Alphabet Poetry Box.html" class="back-link">> BACK TO ALPHABET INDEX</a>
+    </div>
+    
+    <!-- 内容区域 -->
+    <div class="content-container">
+        <h2 class="poem-title">Pedals 花瓣</h2>
+        <div class="poem-content">
+            我和读我的心的人是野花和花瓣，只需风拂过，漫天花瓣雪片一般打着转贴近地面，又被卷到半空。筛过斑驳光影落于一片旷野。胭脂红洇开，指尖丝绸般滑落。露珠压弯的弧度，颤巍巍、映着月光碎影。香气馥郁，又带一丝草涩，钻进鼻腔。风过，挣脱枝头，旋舞，无声谢幕。蜷缩的瓣缘，最终，蜷成半枚褪色印章。
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <div class="footer">
+        > SYSTEM STATUS: ONLINE | > LAST UPDATE: 2025.08.04 | > COPYRIGHT: CHAOS STUDIOS @ Veritas 2025
+    </div>
+</body>
+</html>
