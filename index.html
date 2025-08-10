@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>混沌音序资料库</title>
+    <style>
+        /* 赛博朋克基础样式 */
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --neon-green: #00ff9d;
+            --neon-yellow: #ffe600;
+            --dark-bg: #0d0221;
+            --scanline: rgba(0, 255, 255, 0.05);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            color: var(--neon-blue);
+            position: relative;
+        }
+        
+        /* CRT显示器效果 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                var(--scanline) 2px),
+                repeating-linear-gradient(
+                to bottom,
+                var(--scanline),
+                var(--scanline) 1px,
+                transparent 3px,
+                transparent 5px);
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                rgba(5, 217, 232, 0.1) 100%);
+            pointer-events: none;
+            z-index: 99;
+        }
+        
+        .music-box {
+            position: relative;
+            width: 500px;
+            height: 600px;
+            background: rgba(13, 2, 33, 0.8);
+            border: 2px solid var(--neon-pink);
+            border-radius: 5px;
+            box-shadow: 0 0 20px var(--neon-pink),
+                        0 0 40px var(--neon-purple),
+                        inset 0 0 15px var(--neon-blue);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            box-sizing: border-box;
+            animation: flicker 8s infinite alternate;
+            overflow: hidden;
+        }
+        
+        .dancer {
+            width: 250px;
+            height: 350px;
+            background: url('https://i.imgur.com/JQq1Z0E.png') center/contain no-repeat;
+            position: relative;
+            margin-top: 30px;
+            animation: rotate 15s linear infinite, glitch 5s infinite;
+            filter: hue-rotate(180deg) brightness(1.2) drop-shadow(0 0 5px var(--neon-purple));
+            z-index: 2;
+        }
+        
+        /* 热点基础样式 */
+        .hotspot {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+        
+        .hotspot:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        
+        /* 五个不同位置的热点 */
+        .hotspot-top {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 42, 109, 0.3);
+            box-shadow: 0 0 15px var(--neon-pink),
+                        inset 0 0 10px var(--neon-purple);
+        }
+        
+        .hotspot-right {
+            width: 50px;
+            height: 50px;
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%);
+            background-color: rgba(5, 217, 232, 0.3);
+            box-shadow: 0 0 15px var(--neon-blue),
+                        inset 0 0 10px var(--neon-blue);
+        }
+        
+        .hotspot-bottom {
+            width: 70px;
+            height: 70px;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(211, 0, 197, 0.3);
+            box-shadow: 0 0 15px var(--neon-purple),
+                        inset 0 0 10px var(--neon-pink);
+        }
+        
+        .hotspot-left {
+            width: 50px;
+            height: 50px;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 255, 157, 0.3);
+            box-shadow: 0 0 15px var(--neon-green),
+                        inset 0 0 10px var(--neon-blue);
+        }
+        
+        /* 新增的第五个热点 - 中心位置 */
+        .hotspot-center {
+            width: 45px;
+            height: 45px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 230, 0, 0.3);
+            box-shadow: 0 0 15px var(--neon-yellow),
+                        inset 0 0 10px var(--neon-yellow);
+        }
+        
+        .title {
+            color: var(--neon-blue);
+            margin: 15px 0;
+            text-align: center;
+            font-size: 2.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px var(--neon-blue),
+                         0 0 20px var(--neon-blue);
+            animation: textGlow 2s infinite alternate;
+        }
+        
+        .subtitle {
+            color: var(--neon-purple);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        
+        /* 赛博朋克风格动画 */
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                box-shadow: 0 0 20px var(--neon-pink),
+                            0 0 40px var(--neon-purple),
+                            inset 0 0 15px var(--neon-blue);
+            }
+            20%, 24%, 55% {
+                box-shadow: none;
+            }
+        }
+        
+        @keyframes glitch {
+            0% { transform: rotate(0deg); }
+            2% { transform: rotate(1deg); }
+            4% { transform: rotate(-1deg); }
+            6% { transform: rotate(1deg); }
+            8% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        @keyframes textGlow {
+            from {
+                text-shadow: 0 0 5px var(--neon-blue),
+                            0 0 10px var(--neon-blue);
+            }
+            to {
+                text-shadow: 0 0 10px var(--neon-blue),
+                            0 0 20px var(--neon-blue),
+                            0 0 30px var(--neon-purple);
+            }
+        }
+        
+        /* 二进制代码背景装饰 */
+        .binary-code {
+            position: absolute;
+            color: rgba(5, 217, 232, 0.1);
+            font-size: 0.8rem;
+            z-index: 1;
+            animation: scroll 50s linear infinite;
+        }
+        
+        @keyframes scroll {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
+        }
+        
+        /* 霓虹边框动画 */
+        .music-box::before {
+            content: "";
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 2px solid var(--neon-blue);
+            border-radius: 8px;
+            animation: borderPulse 4s infinite alternate;
+            z-index: -1;
+        }
+        
+        @keyframes borderPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.02);
+                opacity: 0.2;
+            }
+        }
+        
+        /* 热点标签 */
+        .hotspot-label {
+            position: absolute;
+            color: white;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 二进制代码背景元素 -->
+    <div class="binary-code" style="top:0; left:10%;">01001000 01101001 00100000 01000011 01111001 01100010 01100101 01110010 00100000 01000100 01100001 01101110 01100011 01100101 01110010</div>
+    <div class="binary-code" style="top:20%; left:70%;">01000010 01100001 01101100 01101100 01100101 01110100 00100000 01001001 01101110 00100000 01010100 01101000 01100101 00100000 01000011 01111001 01100010 01100101 01110010 00100000 01010011 01110000 01100001 01100011 01100101</div>
+    <div class="binary-code" style="top:40%; left:30%;">01000111 01101100 01101001 01110100 01100011 01101000 00100000 01000001 01100101 01110011 01110100 01101000 01100101 01110100 01101001 01100011 00100000 00110010 00110000 00110010 00110100</div>
+    
+    <div class="music-box">
+        <h1 class="title">(de)CHAOS-MUSIX</h1>
+        <div class="subtitle">SYSTEM INITIALIZED > MULTI-ACCESS ENABLED</div>
+        
+        <div class="dancer">
+            <!-- 顶部热点 -->
+            <div class="hotspot hotspot-top" onclick="window.location.href='audio-archive.html'">
+                ARCHIVE
+            </div>
+            
+            <!-- 右侧热点 -->
+            <div class="hotspot hotspot-right" onclick="window.location.href='team-intro.html'">
+                TEAM
+            </div>
+            
+            <!-- 底部热点 -->
+            <div class="hotspot hotspot-bottom" onclick="window.location.href='Alphabet Poetry Box.html'">
+                <div class="hotspot-label">A-Z<br>Poetry</div>
+            </div>
+            
+            <!-- 左侧热点 -->
+            <div class="hotspot hotspot-left" onclick="window.location.href='1.Mixer.html'">
+                <div class="hotspot-label">MIXER</div>
+            </div>
+            
+            <!-- 新增的第五个热点 - 中心位置 -->
+            <div class="hotspot hotspot-center" onclick="window.location.href='about.html'">
+                <div class="hotspot-label">ABOUT</div>
+            </div>
+        </div>
+        
+        <div class="subtitle" style="margin-top: auto;">[ SELECT NODE TO ACCESS SUB-SYSTEM ]</div>
+    </div>
+</body>
+</html>
