@@ -98,7 +98,7 @@
         }
 
          .hotspot2 {
-            width: 350px;
+            width: 270px;
             height: 350px;
             position: relative;
             margin-top: 30px;
@@ -133,7 +133,7 @@
         .hotspot-top {
             width: 70px;
             height: 70px;
-            top: 20%;
+            top: 15%;
             left: 50%;
             transform: translateX(-50%);
             background-color: rgba(255, 42, 109, 0.3);
@@ -142,8 +142,8 @@
         }
         
         .hotspot-right {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             top: 50%;
             right: 10%;
             transform: translateY(-50%);
@@ -164,8 +164,8 @@
         }
         
         .hotspot-left {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             top: 50%;
             left: 10%;
             transform: translateY(-50%);
@@ -292,6 +292,17 @@
             letter-spacing: 1px;
             pointer-events: none;
         }
+
+        .hotspot2::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url('assests/new Ballet Dancer.png') center/contain no-repeat;
+        opacity: 0.5; /* 这里调透明度 */
+        filter: hue-rotate(180deg) brightness(1.2) drop-shadow(0 0 5px var(--neon-purple));
+        z-index: -1;
+    }
+        
     </style>
 </head>
 <body>
